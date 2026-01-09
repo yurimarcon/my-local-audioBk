@@ -16,7 +16,7 @@ Estrutura do repositório:
 - split_chapters.py — (utilitário auxiliar)
 
 Requisitos
-- Python 3.8+
+- Python 3.11
 - ffmpeg instalado e disponível no PATH
 - Dependências em `requirements.txt` (rodar `pip install -r requirements.txt`)
 
@@ -29,6 +29,7 @@ Instalação
    pip install -r requirements.txt
 
 Como rodar
+> Você pode colocar todas as suas preferências no arquivo `config.py`.
 - Usando o backend padrão (configurável em `config.py`):
   python pipeline.py
 
