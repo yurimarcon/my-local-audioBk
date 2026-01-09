@@ -12,8 +12,8 @@ CHUNK_SIZE = 150
 MP3_SPEED = 1.0
 
 # Backend padrão: 'piper' ou 'coqui'
-# DEFAULT_BACKEND = "piper"
-DEFAULT_BACKEND = "coqui"
+DEFAULT_BACKEND = "piper"
+# DEFAULT_BACKEND = "coqui"
 
 # Defaults para CoquiTTS (só usados quando backend == 'coqui')
 # Exemplos de modelos CoquiTTS (descomente e use em DEFAULT_MODEL_NAME para testar):
