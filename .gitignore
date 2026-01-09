@@ -1,0 +1,74 @@
+# .gitignore para my-local-audioBk
+# Gerado automaticamente — ajuste conforme necessário
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.egg-info/
+.eggs/
+build/
+dist/
+pip-wheel-metadata/
+
+# Virtualenvs (inclui venvs criadas no diretório do projeto)
+/venv/
+/.venv/
+/env/
+/.env/
+
+# Virtualenv presente neste repositório (bin/, include/, lib/, pyvenv.cfg)
+/bin/
+/include/
+/lib/
+/pyvenv.cfg
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Resultados e arquivos gerados pelo TTS
+/result/
+result/
+result_*.wav
+*_merged.wav
+combined.wav
+combined.mp3
+
+# Modelos/artefatos grandes (Piper)
+Piper_Voicer/*.onnx
+Piper_Voicer/*.onnx.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testes / coverage / tox
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDEs
+.vscode/
+.idea/
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Ambiente/credenciais
+.env
+.env.local
+.env.*
+credentials.json
+
+# Outros binários
+*.whl
+
+# Ignore arquivos de áudio gerados temporariamente por scripts (opcional)
+# Remova a linha abaixo se você quiser versionar arquivos WAV específicos no repositório
+# *.wav

@@ -1,0 +1,7 @@
+TTS
+soundfile
+numpy
+torch=2.5.1
+torchvision 
+torchaudio
+piper-tts
