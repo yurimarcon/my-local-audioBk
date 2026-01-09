@@ -14,21 +14,24 @@ logging.basicConfig(
 # ==========================
 # CONFIG
 # ==========================
-INPUT_TXT = "/Volumes/PortableSSD/Audiolivos/Um_Grande_Projeto_Nacional_1994/livro.txt"
-# SPEAKER_WAV = "Yuval_Harari.wav"
-OUTPUT_DIR = "/Volumes/PortableSSD/Audiolivos/Um_Grande_Projeto_Nacional_1994"
-# MODEL_NAME = "tts_models/multilingual/multi-dataset/xtts_v2"
-# MODEL_NAME = "tts_models/pt/cv/vits"
-# MODEL_NAME = "tts_models/en/ljspeech/tacotron2-DDC"
-# LANGUAGE = "pt"
-CHUNK_SIZE = 150
-MP3_SPEED = 1.0
+from config import (
+    INPUT_TXT,
+    OUTPUT_DIR,
+    CHUNK_SIZE,
+    MP3_SPEED,
+    DEFAULT_BACKEND,
+    DEFAULT_MODEL_NAME,
+    DEFAULT_LANGUAGE,
+    DEFAULT_SPEAKER_WAV,
+)
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # device = "mps" if torch.backends.mps.is_available() else "cpu"
 device = "cpu"
 print(f"INFO: Usando device: {device}")
+
+import argparse
 
 # ==========================
 # CHAPTER DETECTION (GOLD)
@@ -172,7 +175,7 @@ def wav_to_mp3(input_wav, output_mp3):
         "ffmpeg", "-y",
         "-i", input_wav,
         "-filter:a", f"atempo={MP3_SPEED}",
-        "-ab", "64k",
+        "-ab", "24k",
         output_mp3
     ], check=True)
 
@@ -180,6 +183,31 @@ def wav_to_mp3(input_wav, output_mp3):
 # MAIN PIPELINE
 # ==========================
 def main():
+    parser = argparse.ArgumentParser(description="Pipeline TTS: escolha backend 'piper' ou 'coqui'")
+    parser.add_argument("--backend", choices=["piper", "coqui"], default=DEFAULT_BACKEND, help="TTS backend to use")
+    parser.add_argument("--model-name", default=DEFAULT_MODEL_NAME, help="Coqui TTS model name (used only when --backend coqui)")
+    parser.add_argument("--language", default=DEFAULT_LANGUAGE, help="Language for Coqui TTS")
+    parser.add_argument("--speaker-wav", default=DEFAULT_SPEAKER_WAV, help="Path to speaker wav for Coqui TTS (optional)")
+    args = parser.parse_args()
+
+    backend = args.backend
+    print(f"INFO: Backend selecionado: {backend}")
+
+    # Se usar Coqui, importar/instanciar TTS aqui (lazy import) — NÃO fazer isso quando usar Piper
+    tts = None
+    if backend == "coqui":
+        try:
+            from TTS.api import TTS
+        except Exception as e:
+            print(f"ERRO: falha ao importar Coqui TTS: {e}")
+            return
+        print("INFO: Inicializando Coqui TTS (pode demorar)...")
+        try:
+            tts = TTS(args.model_name, progress_bar=False).to(device)
+        except Exception as e:
+            print(f"ERRO: falha ao inicializar Coqui TTS: {e}")
+            return
+
     with open(INPUT_TXT, "r", encoding="utf-8") as f:
         text = f.read()
 
@@ -224,14 +252,21 @@ def main():
 
             try:
                 print(f"  - Gerando chunk {i+1}/{len(chunks)} ({len(chunk)} chars)")
-                # tts.tts_to_file(
-                #     text=chunk.replace(".", ","),
-                #     speaker_wav=SPEAKER_WAV,
-                #     language=LANGUAGE,
-                #     file_path=str(wav_path)
-                # )
 
-                subprocess.run(["python", "Piper_Voicer/piper_voicer.py", "--text", str(chunk.replace(".", ",")), "--output", str(wav_path)], check=True)
+                if backend == "piper":
+                    # chama o script Piper externo (mantido como antes)
+                    subprocess.run(["python", "Piper_Voicer/piper_voicer.py", "--text", str(chunk.replace(".", ",")), "--output", str(wav_path)], check=True)
+                else:
+                    # usa CoquiTTS (instância criada anteriormente)
+                    if tts is None:
+                        raise RuntimeError("Coqui TTS não inicializado")
+                    tts.tts_to_file(
+                        text=chunk.replace(".", ","),
+                        speaker_wav=args.speaker_wav,
+                        language=args.language,
+                        file_path=str(wav_path)
+                    )
+
                 print("    ✔ Chunk gerado com sucesso")
             except Exception as e:
                 # Em caso de erro ao gerar um chunk, aborta o capítulo mas mantém os arquivos já gerados
@@ -272,6 +307,7 @@ def main():
             pass
 
     print("✅ PIPELINE FINALIZADO")
+
 
 if __name__ == "__main__":
     main()
