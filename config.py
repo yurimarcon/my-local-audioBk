@@ -2,10 +2,10 @@
 # Preencha/ajuste essas variáveis conforme necessário.
 
 # Caminho para o arquivo de texto de entrada
-INPUT_TXT = "/Volumes/PortableSSD/Audiolivos/Um_Grande_Projeto_Nacional_1994/livro.txt"
+INPUT_TXT = "texto.txt"
 
 # Diretório de saída onde serão gravados os capítulos
-OUTPUT_DIR = "/Volumes/PortableSSD/Audiolivos/Um_Grande_Projeto_Nacional_1994"
+OUTPUT_DIR = "output"
 
 # Chunking / TTS
 CHUNK_SIZE = 150

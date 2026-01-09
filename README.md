@@ -22,7 +22,9 @@ Requisitos
 
 Instalação
 1. Crie/ative um virtualenv (recomendado):
-   python -m venv .venv && source .venv/bin/activate
+   python3.11 -m venv .venv && source .venv/bin/activate
+
+   Versão testada: Python 3.11
 2. Instale dependências:
    pip install -r requirements.txt
 
